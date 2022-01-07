@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    private SimulationWorld _world = SimulationWorld.World;
+    private Person _person;
     private float _speed = 1f;
     private const float MaxSpeed = 10f;
     private Camera _camera;
     private Rigidbody2D _rb;
     private SpriteRenderer _renderer;
     private int _tickCount;
-    Vector3 _moveDirection;
-    // Start is called before the first frame update
+    private Vector3 _moveDirection;
+    private float _timer = 0;
+    
+    // Awake is called on object inititalization
     void Awake()
     {
         _camera = Camera.main;
@@ -19,32 +23,74 @@ public class Ball : MonoBehaviour
         _moveDirection.Normalize();
         _rb = this.gameObject.GetComponent<Rigidbody2D>();
         _renderer = this.gameObject.GetComponent<SpriteRenderer>();
-
-
-        _rb.velocity = _moveDirection * _speed;
+        _person = new Person(_world);
+        _rb.velocity = _moveDirection * _world.Mobility;
         _tickCount = System.Environment.TickCount;
 
     }
 
+    public void SetHealth()
+    {
+        _person.InitializeHealth();
+        this.SetRenderColorBasedOnPersonState();
+    }
+
     private void Update()
     {
-        if(_speed < MaxSpeed && (System.Environment.TickCount-_tickCount) > 1000)
+        _timer += Time.deltaTime;
+        if(_timer >= 1.0)
         {
-            _speed = _speed+0.1f;
-            _tickCount = System.Environment.TickCount;
+            _person.UpdateHealth();
+            this.SetRenderColorBasedOnPersonState();
+            if(_person.IsDead)
+            {
+                _rb.velocity = _rb.velocity * 0.0f;
+            }
+            _timer = 0;
         }
+
+        //if(_speed < MaxSpeed > 1000)
+        //{
+        //    _speed = _speed+0.1f;
+        //}
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_rb != null)
+        if(collision.gameObject.CompareTag("BallTag"))
         {
-            if(collision.gameObject.CompareTag("BallTag"))
+            if (_person.IsHealthy)
             {
-                _renderer.color = Color.red;
+                Ball otherBall = collision.gameObject.GetComponent<Ball>();
+                if (otherBall._person.IsInfected)
+                {
+                    _person.ApplyContact();
+                    this.SetRenderColorBasedOnPersonState();
+                }
             }
-            _moveDirection = Vector3.Reflect(_moveDirection, collision.contacts[0].normal);
-            _rb.velocity = _moveDirection * _speed;
+        }
+        _moveDirection = Vector3.Reflect(_moveDirection, collision.contacts[0].normal);
+        _rb.velocity = _moveDirection * _speed;
+        
+    }
+
+    private void SetRenderColorBasedOnPersonState()
+    {
+        if (_person.IsInfected)
+        {
+            _renderer.color = Color.red;
+        }
+        if (_person.IsRecovering)
+        {
+            _renderer.color = Color.yellow;
+        }
+        if (_person.IsHealthy)
+        {
+            _renderer.color = Color.green;
+        }
+        if (_person.IsDead)
+        {
+            _renderer.color = Color.gray;
         }
     }
 }
