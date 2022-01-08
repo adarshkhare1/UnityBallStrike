@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallManager : MonoBehaviour
 {
-    private int _populationSize = 200;
+    private int _populationSize = 1000;
     private Camera _camera;
     [SerializeField]
     GameObject ballPrefab;

@@ -7,7 +7,7 @@ internal class Person
     private double _immuneLevel;
     private double _recoveryRate;
     private double _immunityLossRate;
-    private int _recoveryPeriod;
+    private int _incubationPeriod;
     private int _lastInfection;
 
     private readonly Random _random = new Random();
@@ -17,11 +17,11 @@ internal class Person
         if (parentWorld == null)
             throw new ArgumentNullException("parentWorld");
         _parentWorld = parentWorld;
-        _healthLevel = 1.0f;
-        _immuneLevel = 0.0f;
-        _recoveryRate = 0.05;
-        _immunityLossRate = 0.1f;
-        _recoveryPeriod = 30000;
+        _healthLevel = _random.Next(75, 100) / 100.0; // initial health level 0.75 to 1.0
+        _immuneLevel = _random.Next(0, 10) / 100.0; // initial immune level 0 to 0.1
+        _recoveryRate = _random.Next(5, 25) / 100.0; // recovery rate 0.05 to 0.25
+        _immunityLossRate = _random.Next(5, 20) / 100.0; // immunity loss rate 0.05 to 0.2
+        _incubationPeriod = _random.Next(5000, 30000); // incubation period 5 to 30 seconds
         _state = PersonState.Healthy;
     }
     public bool IsHealthy { get => _state == PersonState.Healthy; }
@@ -44,7 +44,7 @@ internal class Person
     {
         _lastInfection = Environment.TickCount;
         _state = PersonState.Infected;
-        _healthLevel = applyLogarithmDecayStep(_healthLevel, this._parentWorld.LethalityRate);
+        _healthLevel = applyDecayStep(_healthLevel, this._parentWorld.LethalityRate);
     }
 
     public double RecoveryRate
@@ -86,15 +86,15 @@ internal class Person
         int currentTime = Environment.TickCount;
         if (this.IsInfected)
         {
-            if ((currentTime - _lastInfection) > _recoveryPeriod)
+            if ((currentTime - _lastInfection) > _incubationPeriod)
                 {
                 _lastInfection = 0;
                 _state = PersonState.Recovering;
             }
             else
             {
-                _healthLevel = applyLogarithmDecayStep(_healthLevel, this._parentWorld.LethalityRate);
-                _immuneLevel = applyLogisticGrowthStep(_immuneLevel, _immunityLossRate);
+                _healthLevel = applyDecayStep(_healthLevel, this._parentWorld.LethalityRate);
+                _immuneLevel = applyGrowthStep(_immuneLevel, _recoveryRate);
             }
             if (_healthLevel < 0.2)
             {
@@ -103,8 +103,8 @@ internal class Person
         }
         if (_state == PersonState.Recovering)
         {
-            _healthLevel = applyLogisticGrowthStep(_healthLevel, _recoveryRate);
-            _immuneLevel = applyLogisticGrowthStep(_immuneLevel, _recoveryRate);
+            _healthLevel = applyGrowthStep(_healthLevel, _recoveryRate);
+            _immuneLevel = applyGrowthStep(_immuneLevel, _recoveryRate);
             if (_healthLevel >= 0.9)
             {
                 _state = PersonState.Healthy;
@@ -112,19 +112,19 @@ internal class Person
         }
         if (_state == PersonState.Healthy)
         {
-            _immuneLevel = applyLogarithmDecayStep(_immuneLevel, _immunityLossRate);
+            _immuneLevel = applyDecayStep(_immuneLevel, _immunityLossRate);
         }
 
     }
 
-    private double applyLogisticGrowthStep(double originalValue, double growthRate)
+    private double applyGrowthStep(double originalValue, double growthRate)
     {
-        return 1 / (1 + (1 - originalValue) * Math.Exp(growthRate));
+        return originalValue + (1 - originalValue) * growthRate;
     }
 
-    private double applyLogarithmDecayStep(double originalValue, double decayRate)
+    private double applyDecayStep(double originalValue, double decayRate)
     {
-        return (1 - 1 / (1 + (1 - originalValue) * Math.Exp(decayRate)));
+        return originalValue - originalValue * decayRate;
     }
 }
 
