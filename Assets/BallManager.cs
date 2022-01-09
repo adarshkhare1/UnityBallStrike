@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallManager : MonoBehaviour
 {
-    private int _populationSize = 1000;
+    private int _populationSize = 250;
     private Camera _camera;
     [SerializeField]
     GameObject ballPrefab;
@@ -20,11 +20,5 @@ public class BallManager : MonoBehaviour
             GameObject b = Instantiate(ballPrefab, new Vector3(x, y), Quaternion.identity);
             b.GetComponent<Ball>().SetHealth();
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

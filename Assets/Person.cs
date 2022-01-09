@@ -18,10 +18,10 @@ internal class Person
             throw new ArgumentNullException("parentWorld");
         _parentWorld = parentWorld;
         _healthLevel = _random.Next(75, 100) / 100.0; // initial health level 0.75 to 1.0
-        _immuneLevel = _random.Next(0, 10) / 100.0; // initial immune level 0 to 0.1
+        _immuneLevel = _random.Next(1, 10) / 100.0; // initial immune level 0.01 to 0.1
         _recoveryRate = _random.Next(5, 25) / 100.0; // recovery rate 0.05 to 0.25
-        _immunityLossRate = _random.Next(5, 20) / 100.0; // immunity loss rate 0.05 to 0.2
-        _incubationPeriod = _random.Next(5000, 30000); // incubation period 5 to 30 seconds
+        _immunityLossRate = _random.Next(2, 10) / 100.0; // immunity loss rate 0.02 to 0.1
+        _incubationPeriod = _random.Next(5000, 30000); // incubation period in miliseconds
         _state = PersonState.Healthy;
     }
     public bool IsHealthy { get => _state == PersonState.Healthy; }
