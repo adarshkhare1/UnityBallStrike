@@ -19,9 +19,9 @@ internal class Person
         _parentWorld = parentWorld;
         _healthLevel = _random.Next(75, 100) / 100.0; // initial health level 0.75 to 1.0
         _immuneLevel = _random.Next(1, 10) / 100.0; // initial immune level 0.01 to 0.1
-        _recoveryRate = _random.Next(5, 25) / 100.0; // recovery rate 0.05 to 0.25
-        _immunityLossRate = _random.Next(2, 10) / 100.0; // immunity loss rate 0.02 to 0.1
-        _incubationPeriod = _random.Next(5000, 30000); // incubation period in miliseconds
+        _recoveryRate = _random.Next(5, 10) / 100.0; // recovery rate 0.05 to 0.1
+        _immunityLossRate = _random.Next(2, 5 )/ 100.0; // immunity loss rate 0.02 to 0.05
+        _incubationPeriod = _random.Next(15000, 60000); // incubation period in miliseconds
         _state = PersonState.Healthy;
     }
     public bool IsHealthy { get => _state == PersonState.Healthy; }
@@ -40,7 +40,7 @@ internal class Person
         }
     }
 
-    private void Infect()
+    internal void Infect()
     {
         _lastInfection = Environment.TickCount;
         _state = PersonState.Infected;
@@ -73,8 +73,7 @@ internal class Person
     {
         if (IsDead) return;
         double chance = _random.Next(0, 100) / 100.0;
-        if (_immuneLevel < chance/2 &&
-            chance < this._parentWorld.Transmissibility)
+        if (chance < this._parentWorld.Transmissibility)
         {
             this.Infect();
         }
@@ -86,7 +85,7 @@ internal class Person
         int currentTime = Environment.TickCount;
         if (this.IsInfected)
         {
-            if ((currentTime - _lastInfection) > _incubationPeriod)
+            if ((currentTime - _lastInfection) > _incubationPeriod * (1- _immuneLevel))
                 {
                 _lastInfection = 0;
                 _state = PersonState.Recovering;

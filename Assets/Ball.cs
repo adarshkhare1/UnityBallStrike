@@ -28,9 +28,13 @@ public class Ball : MonoBehaviour
         _rb.velocity = _moveDirection * _world.Mobility;
     }
 
-    public void SetHealth()
+    internal void SetHealth(PersonState state)
     {
         _person.InitializeHealth();
+        if( state == PersonState.Infected)
+        {
+            _person.Infect();
+        }
         _renderer.UpdateColorsBasedOnPerson();
     }
 

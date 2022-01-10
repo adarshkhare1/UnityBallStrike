@@ -2,7 +2,7 @@
 internal class SimulationWorld
 {
     public static SimulationWorld World = new SimulationWorld();
-    public readonly float InitialInfectionRate = 0.1f;
+    public readonly float InitialInfectionRate = 0.01f;
     private float _transmissibility;
     private float _lethalityRate;
     private float _mobility;

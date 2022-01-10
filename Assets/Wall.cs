@@ -30,7 +30,7 @@ public class Wall : MonoBehaviour
         {
             case WallLocation.Top:
                 collider.size = new Vector2(horzExtent*2, 2*wallWidth);
-                collider.transform.position = new Vector3(0, vertExtent + wallWidth);
+                collider.transform.position = new Vector3(0, vertExtent + wallWidth - 1.5f);
                 break;
             case WallLocation.Bottom:
                 collider.size = new Vector2(horzExtent*2, 1);
