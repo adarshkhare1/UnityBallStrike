@@ -23,8 +23,8 @@ public class BallManager : MonoBehaviour
 
     internal GameObject LaunchBall()
     {
-        float x = Random.Range(-_clampLimit, +_clampLimit);
-        float y = Random.Range(-_clampLimit, +_clampLimit-2.0f);
+        float x = Random.Range(-_clampLimit-7.5f, +_clampLimit);
+        float y = Random.Range(-_clampLimit, +_clampLimit);
         GameObject b = Instantiate(ballPrefab, new Vector3(x, y), Quaternion.identity);
         return b;
     }
