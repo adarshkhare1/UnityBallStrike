@@ -1,5 +1,6 @@
 ﻿using System;
-internal class SimulationWorld
+using UnityEngine;
+public class SimulationWorld
 {
     public static SimulationWorld World = new SimulationWorld();
     public readonly float InitialInfectionRate = 0.01f;
@@ -45,5 +46,23 @@ internal class SimulationWorld
                 throw new ArgumentOutOfRangeException("movability");
             _mobility = value;
         }
+    }
+
+    internal void OnTransimissibilityChange(float value)
+    {
+        _transmissibility = (float)value/100.0f;
+        Debug.Log("Transmissibility=" + _transmissibility);
+    }
+
+    internal void OnLethalityChange(float value)
+    {
+        _lethalityRate = (float)value / 500.0f;
+        Debug.Log("Lethality=" + _lethalityRate);
+    }
+
+    internal void OnMobilityChange(float value)
+    {
+        _mobility = (float)value / 20.0f;
+        Debug.Log("Mobility=" + _mobility);
     }
 }

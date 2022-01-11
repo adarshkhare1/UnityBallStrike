@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class Ball : MonoBehaviour
     void Awake()
     {
         _camera = Camera.main;
-        _moveDirection = new Vector3(Random.value, Random.value);
+        _moveDirection = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value);
         _moveDirection.Normalize();
         _rb = this.gameObject.GetComponent<Rigidbody2D>();
         _person = new Person(_world);
@@ -80,6 +81,20 @@ public class Ball : MonoBehaviour
         }
         _moveDirection = Vector3.Reflect(_moveDirection, collision.contacts[0].normal);
         _rb.velocity = _moveDirection * _speed;
-        
+    }
+
+    public void OnTransimissibilityChange(Single value)
+    {
+        this._world.OnTransimissibilityChange(value);
+    }
+
+    public void OnLethalityChange(Single value)
+    {
+        this._world.OnLethalityChange(value);
+    }
+
+    public void OnMobilityChange(Single value)
+    {
+        this._world.OnMobilityChange(value);
     }
 }
