@@ -6,7 +6,13 @@ public class NormalDistribution
     private float _variance = 0.05f;
     private float _mean;
 
-   
+
+    public static float GetRandomGaussian(float minValue, float maxValue)
+    {
+        NormalDistribution nd = new NormalDistribution(minValue, maxValue);
+        return nd.RandomGaussian();
+    }
+
     public NormalDistribution(float minValue = 0.0f, float maxValue = 1.0f)
     {
         _mean = (minValue+ maxValue) / 2;
