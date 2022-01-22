@@ -1,7 +1,7 @@
 # UnityBallStrike - Visual simulation of virus spread in population.
 A simulation program using unity framework and C# programing language. Program demonstrate spread of a virus when an infected body enter into the population. 
 All probabilty calculations using normal distribution and exponential growth and deccay.
-It demonstrate following
+# What it demonstrate?
 * Virus spread faster in dense population
 * Immunity developed when someone get infected
 * Spread is faster with higher mobility of population
