@@ -14,6 +14,10 @@ namespace PopupUI {
         // boolean flag will decide whether the popup follows 
         public bool doesFollow = true;
 
+        private Ball _targetBall;
+        private Image _healthBar;
+        private Image _immunityBar;
+
         // denotes how far above the object the popup should display
         [SerializeField]
         private Vector3 offset = new Vector3(0, 1);
@@ -42,8 +46,10 @@ namespace PopupUI {
 
             rectTransform = GetComponent<RectTransform>();
             lineRenderer = transform.parent.Find("Line").GetComponent<LineRenderer>();
-
+            _immunityBar = popupObject.transform.Find("ImmunityBar").GetComponent<Image>();
+            _healthBar = popupObject.transform.Find("HealthBar").GetComponent<Image>();
             Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("UI"), LayerMask.NameToLayer("Ball"));
+            this.SetPopupActive(false);
         }
 
         // callback is called once every frame
@@ -53,6 +59,11 @@ namespace PopupUI {
                     MovePopup();
                 }
                 DrawLine();
+                if(_targetBall != null)
+                {
+                    _healthBar.fillAmount = (float)_targetBall.GetHealth();
+                    _immunityBar.fillAmount = (float)_targetBall.GetImmunityLevel();
+                }
             }
         }
 
@@ -97,12 +108,19 @@ namespace PopupUI {
         }
 
         // getter and setter for the target
-        public void SetTarget(GameObject target) { this.target = target; }
+        public void SetTarget(GameObject target)
+        {
+            this.target = target;
+            _targetBall = target.GetComponent<Ball>();
+        }
 
         public GameObject GetTarget() { return target; }
 
 
         // enable/disable pop-ups
-        public void SetPopupActive(bool value) { popupObject.SetActive(value); }
+        public void SetPopupActive(bool value) {
+            popupObject.SetActive(value);
+            lineRenderer.enabled = value;
+        }
     }
 }

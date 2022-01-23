@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PopupUI;
 
 public class Ball : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class Ball : MonoBehaviour
     private Rigidbody2D _rb;
     private Vector3 _moveDirection;
     private float _timer = 0;
+    private bool _isPopupOn = false;
+    private FollowObject _popupUI;
     [SerializeField]
     double healthLevel;
     [SerializeField]
@@ -21,7 +24,9 @@ public class Ball : MonoBehaviour
     void Awake()
     {
         _camera = Camera.main;
+
         _moveDirection = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value);
+        _popupUI = GameObject.Find("Popup Display").transform.Find("Popup Canvas").GetComponent<FollowObject>();
         _moveDirection.Normalize();
         _rb = this.gameObject.GetComponent<Rigidbody2D>();
         _person = new Person(_world);
@@ -82,6 +87,34 @@ public class Ball : MonoBehaviour
         _moveDirection = Vector3.Reflect(_moveDirection, collision.contacts[0].normal);
         _rb.velocity = _moveDirection * _speed;
     }
+
+    private void OnMouseDown()
+    {
+        //Ball is clicked
+        if (_isPopupOn)
+        {
+            _isPopupOn = false;
+            _popupUI.SetPopupActive(false);
+        }
+        else
+        {
+            _isPopupOn = true;
+            _popupUI.SetTarget(this.gameObject);
+            _popupUI.SetPopupActive(true);
+        }
+       
+    }
+
+    public double GetHealth()
+    {
+        return _person.HealthLevel;
+    }
+
+    public double GetImmunityLevel()
+    {
+        return _person.ImmuneLevel;
+    }
+
 
     public void OnTransimissibilityChange(Single value)
     {
