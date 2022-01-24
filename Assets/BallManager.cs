@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallManager : MonoBehaviour
 {
-    private int _populationSize = 200; //initial population
+    private int _populationSize = 100; //initial population
     private Camera _camera;
     private float _clampLimit;
     [SerializeField]
